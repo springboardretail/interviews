@@ -1,0 +1,112 @@
+// Cucumber : BDD (Sample of POM architecture is also included)
+// (BDD Framework) – With Selenium Webdriver
+// Dependencies :  Cucucmber with  Java / JVM/Junit / Reports / Gherkin / Selenium
+
+
+// Background Approach/Steps:
+
+1. Create a Maven Project : HeartlandBDDFramework
+2. Update pom with all dependencies (cucumber java/jvm/junit/selenium/Ghrekin/Natural/Reports etc.)
+3. Crete a Feature file (MyShoppingStore.feature) – Create feature /scenario using given when then 
+4. Create a Step Definition (MyShoppingStoreStepDefinition.java – Write Java /Selenium code)
+5. Create a runner class
+
+
+// Feature File
+
+MyShoppingStore.feature
+Feature: My Shopping Store Feature
+
+Scenario: Adding Item to Shopping Cart
+
+Given User is on Automation Practice landing page
+When Title of the Landing Page is Your Logo a new experience
+Then user enters a valid search string in the Search box
+And user clicks on first valid product to Add
+And user clicks on a different product to Add
+And user clicks Add to Cart button
+Then user verifies all items successfully added to Cart
+Then user clicks 'Proceed to checkout' button
+Then user closes the browser
+
+
+// Step Definition
+
+MyShoppingStoreStepDefinition.java
+package stepDefinitions;
+import java.util.concurrent.TimeUnit;
+ 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+import junit.framework.Assert;
+public class MyShoppingStepDefinition {
+
+WebDriver driver;
+	protected final String  appTitle = "Your Logo a new experience";
+	protected final String  loginTitle = "Your Logo";
+	// Cucumber Gherkin Given When Then section begins
+	
+  @Given("^User is on Automation Practice landing page$")
+	public void User_is_on_Automation_Practice_Landing_Page() {
+		//System.setProperty("webdriver.chrome.driver", path + "/src/main/resources/chromedrive.exe");
+		System.setProperty("webdriver.chrome.driver", "C:\\HeartLandWorkspace\\HeartLandBDDFramework\\src\\test\\resources\\chromedriver.exe");		
+		driver = new ChromeDriver() ; // Launch Chrome
+		driver.get("http://automationpractice.com/");
+		driver.manage().timeouts().pageLoadTimeout(40,TimeUnit.SECONDS);
+		driver.manage().timeouts().implicitlyWait(30,TimeUnit.SECONDS);			
+	}
+		@When("^Title of the Landing Page is Your Logo a new experience$")
+	public void title_of_the_Landing_Page_is_Automation_Practice() {		
+		String dislayedTitle = driver.findElement(By.xpath("//*[@id='My Store']")).getText();
+		Assert.assertEquals(LandingTitle, dislayedTitle);	   
+	}
+	@Then("^user enters a valid search string in the Search box$")
+	public void user_enters_valid_search() {
+	    driver.findElement(By.name("search_query")).sendKeys("t-shirts");
+ 	}
+
+	@Then("^user clicks on first valid product to Add$")
+	public void user_clicks_on_product()  {
+	   driver.findElement(By.id("bigpic")).click();
+	}
+	@Then("^user clicks on a different product to Add$")
+	public void user_clicks_on_product()  {
+	   driver.findElement(By.id("group_1")).click();
+	}
+	// user selects different color -- orange	
+	@Then("^user selects different color$")
+	public void user_clicks_on_product()  {
+	   driver.findElement(By.id("color_16")).click();
+	}
+	@Then("^user clicks Add to Cart button$")
+	public void user_clicks_Add_to_Cart_button()  {
+	   driver.findElement(By.id("add_to_cart")).click();
+		System.out.println("The title is : " + driver.findElement(By.xpath("//*[@id='Product successfully added to your shopping cart']")).getText());
+	}
+	@Then("^user closes the browser$")
+	public void user_closes_the_browser()  {
+	  driver.quit();
+	  System.out.println("*********Closing the browser********** ");
+	}
+}
+
+
+// Test Runner class
+
+package runner;
+import org.junit.runner.RunWith;
+import cucumber.api.CucumberOptions;
+import cucumber.api.junit.Cucumber;
+@RunWith(Cucumber.class)
+@CucumberOptions(		//features = "Feature"
+		features = "C:\\HeartlandWorkspace\\HeartlandBDDFramework\\src\\main\\java\\features\\MyShoppingStore.feature"		
+		,glue={"stepDefinitions"}
+		,format={"pretty", "html:test-output"}
+		)
+public class TestRunner {
+
+}
